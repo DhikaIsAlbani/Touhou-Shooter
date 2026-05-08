@@ -1,0 +1,191 @@
+/* ─── RESET ───────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── BODY ────────────────────────────────────────────────── */
+body {
+  background: #0d0d0d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;   /* dvh = accounts for mobile browser chrome */
+  width: 100dvw;
+  overflow: hidden;     /* no scroll bars; layout.js handles overflow by scaling */
+  font-family: monospace;
+  color: #eee;
+  gap: 8px;
+}
+
+/* ─── GAME FRAME ──────────────────────────────────────────── */
+.Gameframe {
+  position: relative;
+  /* Base size — layout.js scales this via transform */
+  width:  600px;
+  height: 400px;
+  border: 2px solid #444;
+  background: #0e0e14;
+  box-shadow: inset 0 0 40px rgba(0,0,0,0.6), 0 0 12px rgba(0,0,0,0.8);
+  overflow: hidden;
+  /* transform-origin set by layout.js depending on mode */
+  flex-shrink: 0;
+}
+
+/* Full-control mode: frame is fixed-positioned by layout.js */
+.gameframe--fullcontrol {
+  border-color: transparent;  /* hide border when fullscreen */
+}
+
+/* ─── PLAYER ──────────────────────────────────────────────── */
+.character {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: #4af;
+  border-radius: 4px;
+  box-shadow: 0 0 8px #4af, 0 0 16px rgba(68,170,255,0.4);
+}
+
+/* ─── ENEMY ───────────────────────────────────────────────── */
+.enemy {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: #f44;
+  border-radius: 4px;
+  box-shadow: 0 0 6px rgba(255,80,80,0.5);
+}
+
+/* ─── BOSS HP BAR ─────────────────────────────────────────── */
+#bossbar {
+  width: 600px;
+  margin-bottom: 4px;
+  font-family: monospace;
+}
+
+#bossbar-name {
+  font-size: 13px;
+  color: #ffbbdd;
+  letter-spacing: 1px;
+  margin-bottom: 3px;
+  text-align: center;
+}
+
+#bossbar-track {
+  width: 100%;
+  height: 8px;
+  background: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+#bossbar-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #ff4488, #ff99cc);
+  transform-origin: left;
+  transition: width 0.15s;
+}
+
+#bossbar-phase {
+  font-size: 11px;
+  color: #ff6699;
+  text-align: right;
+  margin-top: 2px;
+  letter-spacing: 1px;
+  min-height: 14px;
+}
+
+/* ─── BULLETS ─────────────────────────────────────────────── */
+.user-bullet {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4af;
+}
+
+.enemy-bullet {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f55;
+}
+
+/* ─── TRACKPAD — OUTSIDE MODE (default) ──────────────────── */
+.mousetrackpad {
+  position: relative;   /* needed for ::after to anchor */
+}
+
+.mousetrackpad::after {
+  content: 'MOVE HERE';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font: bold 48px monospace;
+  letter-spacing: 8px;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255,255,255,0.08);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* ─── TRACKPAD — INSIDE MODE ──────────────────────────────── */
+/* When TRACKPAD_INSIDE = true, layout.js adds this class.
+   The trackpad becomes a transparent overlay on the game frame.
+   pointer-events: none so it doesn't block game UI buttons —
+   instead the gameframe itself handles input (see layout.js).  */
+.trackpad--inside {
+  position: fixed;        /* layout.js positions it exactly over the frame */
+  background: transparent;
+  border: none;
+  cursor: crosshair;
+  z-index: 10;
+  /* Re-enable pointer events for mouse/touch movement tracking */
+  pointer-events: all;
+}
+
+/* ─── HUD ─────────────────────────────────────────────────── */
+.data {
+  width: 600px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #ddd;
+  border-top: 1px solid #2a2a2a;
+  padding-top: 4px;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  /* In inside mode, layout.js repositions this to fixed bottom */
+}
+
+/* ─── RESPONSIVE BREAKPOINTS ─────────────────────────────── */
+/* These handle cases where layout.js hasn't run yet or JS is off.
+   layout.js takes over at runtime and applies precise pixel scaling. */
+
+/* Narrow mobile — portrait phones */
+@media (max-width: 400px) {
+  .Gameframe    { width: 100vw; height: calc(100vw * 2/3); }
+  .mousetrackpad { width: 100vw; height: calc(100vw / 3); }
+  .data          { width: 100vw; font-size: 11px; }
+}
+
+/* Wide mobile / small tablet — landscape phones */
+@media (min-width: 401px) and (max-width: 700px) {
+  .Gameframe    { width: 100vw; height: calc(100vw * 2/3); }
+  .mousetrackpad { width: 100vw; height: calc(100vw / 3); }
+  .data          { width: 100vw; font-size: 12px; }
+}
+
+/* Tablet portrait — layout.js precision kicks in above this */
+@media (min-width: 701px) and (max-width: 900px) {
+  .Gameframe    { width: 600px; height: 400px; }
+  .mousetrackpad { width: 600px; height: 200px; }
+}

@@ -1,143 +1,227 @@
-# Dhika’s Bullet Hell Project
+# Dhika's Bullet Hell Project
 
-**Version 1.0.0**  
-*A Touhou-inspired danmaku framework built from scratch in JavaScript*
+**Version 1.1.0**  
+A Touhou-inspired Bullet Hell Game & Framework built with Vanilla JavaScript
 
-![Project Status](https://img.shields.io/badge/Status-Early_Development-blue)
-![Version](https://img.shields.io/badge/Version-1.0.0-green)
+[![Project Status](https://img.shields.io/badge/Status-Playable_Early_Development-blue)](https://img.shields.io/badge/Status-Playable_Early_Development-blue)
+[![Version](https://img.shields.io/badge/Version-1.1.0-green)](https://img.shields.io/badge/Version-1.1.0-green)
 
-A modular, scalable 2D bullet hell framework focused on clean architecture, data-driven design, and long-term extensibility. What started as simple experimentation has evolved into a lightweight engine-like structure capable of supporting complex danmaku patterns and gameplay systems.
+A lightweight Touhou-inspired bullet hell game built entirely with HTML, CSS, and Vanilla JavaScript. The project combines a modular gameplay framework with an expanding playable game, emphasizing clean architecture, reusable systems, and long-term scalability.
 
 ---
 
 ## Overview
 
-This project began as a personal coding experiment and gradually transformed into a structured **Touhou-inspired bullet hell framework**. Instead of focusing on quick hardcoded content, the emphasis has always been on building solid, reusable systems first.
+Originally started as a programming experiment, the project has grown into a fully playable bullet hell prototype featuring multiple playable characters, structured stage progression, menu navigation, save functionality, and modular gameplay systems.
 
-The framework prioritizes:
-- Separation of logic and rendering
-- Data-driven enemy and projectile behavior
-- Responsive design across devices
-- Future-proof architecture for characters, patterns, and mechanics
+The philosophy remains the same:
 
-It is **not yet a complete game**, but it already functions as a solid foundation for one.
+- Build reusable systems before content.
+- Keep gameplay data-driven.
+- Separate UI, layout, and gameplay logic.
+- Design for long-term expansion.
+
+Current architecture is divided into three major systems:
+
+- `layout.js` — Responsive scaling and input layout.
+- `script.js` — Core gameplay engine.
+- `menu.js` — Menu, Story Mode, Save, Pause, Character Selection, and Settings.
 
 ---
 
 ## Core Features
 
-### 🎮 Gameplay Systems
-- Responsive 2D bullet hell gameplay with normalized logical coordinates
-- Modular character system with unique shooting behaviors
-- Advanced projectile factory system (`makePlayerBullet`, `makeEnemyBullet`)
-- Rich bullet pattern library (spread, ring, spiral, wave, zigzag, tracking, etc.)
-- Structured wave progression with miniboss and boss encounters
+### Gameplay
 
-### 🛠️ Architecture Highlights
-- **Responsive Layout System**: Dynamic viewport scaling with consistent gameplay across resolutions
-- **Character Registry**: Easy addition of new playable characters with unique abilities
-- **Enemy Variant System**: Data-driven enemies with movement, patterns, and drop tables
-- **Trail Rendering Engine**: Configurable, performant projectile trails
-- **Boss Phase Framework**: Multi-phase encounters with transitions and escalation
-- **Upgrade & Reward System**: Power-ups, barriers, speed boosts, and floating text feedback
+- 26-wave campaign
+- Multiple miniboss encounters
+- Final boss with multiple phases
+- Five playable characters
+- Unique shooting mechanics
+- Character-specific projectiles
+- Dynamic enemy patterns
+- Projectile trail system
+- Enemy HP bars
+- Boss HP bar
+- Floating combat feedback
 
-### 🎨 Visual & Polish
-- Dynamic projectile trails and visual effects
-- Phase indicators, HP bars, and attack warnings
-- Device-aware input handling (keyboard + trackpad/mobile)
+### Characters
 
----
+Currently playable:
 
-## Currently Playable Characters
+- Reimu Hakurei
+- Marisa Kirisame
+- Yukari Yakumo
+- Youmu Konpaku
+- Reisen Udongein Inaba
 
-- **Reimu** — Homing needles with elegant trails
-- **Marisa** — High-power Yin-Yang orb shots
-
-*Future characters (placeholders ready):* Yukari, Youmu, Reisen, and more.
+Each character uses independent shooting logic and projectile behavior.
 
 ---
 
-## Bosses
+## Enemy Systems
 
-**Yuyuko Saigyouji** — Fully implemented final boss with multiple phases featuring:
-- Radial rings
-- Spiral patterns
-- Layered spreads
-- Dynamic difficulty escalation
+- Fairy enemies
+- Spirit enemies
+- Youkai minibosses
+- Final boss (Yuyuko Saigyouji)
+
+Supported bullet patterns include:
+
+- Straight
+- Spread
+- Wave
+- Burst
+- Ring
+- Spiral
+- Zigzag
+- Auto Tracking
+- Boss-exclusive attacks
 
 ---
 
-## Project Structure & Philosophy
+## Story System
 
-The codebase emphasizes **systems over content**. Most mechanics are built as configurable, reusable modules rather than one-off scripts. This makes balancing, expansion, and maintenance significantly easier as the project grows.
+- Startup screen
+- Main Menu
+- Story Mode
+- Continue Save
+- Character Selection
+- Settings
+- Pause Menu
+- Exit to Lobby
 
-Key principles:
-- Build foundations first
-- Prefer data-driven design
-- Keep logic and rendering separate
-- Design for iteration and scalability
+Progress is automatically saved between waves.
 
 ---
 
-## How to Run
+## Progression Systems
 
-1. Clone the repository
-2. Open `index.html` in a modern browser (recommended: Chrome/Edge)
-3. Play!
+- Barrier pickups
+- Golden Heart revival system
+- Temporary Speed Boost
+- Temporary Shot Size Boost
+- Character upgrades
+- Wave progression
+- Reward drops
 
-*No build step required — pure vanilla JavaScript + HTML5 Canvas.*
+---
+
+## Responsive Systems
+
+- Automatic viewport scaling
+- Desktop support
+- Mobile touch controls
+- Separate trackpad mode
+- Dynamic HUD positioning
+
+---
+
+## Audio Framework
+
+The project includes a modular audio manager ready for future implementation.
+
+Planned support:
+
+- Background Music
+- Sound Effects
+- Character Voices
+- Boss Themes
 
 ---
 
 ## Controls
 
-- Using a **MousePad** from below the **gameframe**.
-- Later controls will be added.
+### Desktop
+
+- Mouse movement via Trackpad
+- Space / X → Bomb
+- Pause through Settings shortcut
+
+### Mobile
+
+- Touch Trackpad
+- Bomb Button
+- Pause Button
+
+---
+
+## Project Structure
+- index.html
+- layout.js
+- Responsive layout
+- Scaling
+- Trackpad handling
+- script.js
+- Gameplay
+- Waves
+- Characters
+- Enemies
+- Bullets
+- Bosses
+- Items
+- Save system
+- menu.js
+- Startup
+- Lobby
+- Story
+- Character Selection
+- Settings
+- Pause
 
 ---
 
 ## Roadmap
 
-- More playable characters with unique mechanics
-- Scoring system & survival modes
-- Additional bosses and stages
-- Sound & music integration
-- Level editor / pattern tool (long-term)
-- Mobile touch controls improvement
-- Save system & unlocks
+- Endless Mode
+- Complete Bomb Ultimate system
+- Sound implementation
+- Voice implementation
+- Additional stages
+- More Touhou characters
+- Scoring system
+- Difficulty selection
+- Replay system
+- Achievements
 
 ---
 
 ## Changelog
 
-### Version 1.0.0 (8/5/26)
-- Initial public framework release
-- Responsive layout system
-- Character & projectile architecture
-- Yuyuko boss with multi-phase patterns
-- Wave progression system
-- Trail rendering engine
-- Upgrade and reward systems
+### Version 1.1.0
 
-*See [CHANGELOG.md](CHANGELOG.md) for detailed history.*
+- Added complete menu framework
+- Added Story Mode flow
+- Added Character Selection
+- Added Settings system
+- Added Pause Menu
+- Added Save / Continue system
+- Added Bomb placeholder mechanic
+- Added Golden Heart revival
+- Added Item Drop system
+- Added Character textures
+- Added Enemy textures
+- Added Cloud background system
+- Added Audio framework
+- Expanded campaign to 26 waves
+- Improved mobile responsiveness
+- Refactored architecture into Layout, Gameplay, and Menu systems
 
 ---
 
 ## Final Notes
 
-This project was built with curiosity, persistence, and the joy of learning through creation.
+This project continues to serve two goals:
 
-> "Using available tools. Building with available understanding. Learning through creation itself."
+- Building a polished Touhou-inspired bullet hell game.
+- Learning software architecture through practical game development.
+
+> *"Using available tools. Building with available understanding. Learning through creation itself."*
 
 — Dhika
 
 ---
 
-## License
-
 Licensed under the MIT License.
-See LICENSE for more information.
 
----
-
-**Made with ❤️ by Dhika**
+Made with ❤️ by Dhika

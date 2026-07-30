@@ -23,20 +23,70 @@ body {
 /* ─── GAME FRAME ──────────────────────────────────────────── */
 .Gameframe {
   position: relative;
-  /* Base size — layout.js scales this via transform */
-  width:  600px;
+
+  width: 600px;
   height: 400px;
+
   border: 2px solid #444;
-  background: #0e0e14;
-  box-shadow: inset 0 0 40px rgba(0,0,0,0.6), 0 0 12px rgba(0,0,0,0.8);
+
+  background:
+    linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.25)),
+    url('./assets/background/hakugyokurou.png');
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  box-shadow:
+    inset 0 0 40px rgba(0,0,0,0.45),
+    0 0 12px rgba(0,0,0,0.8);
+
   overflow: hidden;
-  /* transform-origin set by layout.js depending on mode */
   flex-shrink: 0;
 }
 
 /* Full-control mode: frame is fixed-positioned by layout.js */
 .gameframe--fullcontrol {
   border-color: transparent;  /* hide border when fullscreen */
+}
+
+.character,
+.enemy,
+.user-bullet,
+.enemy-bullet {
+  position: absolute;
+  z-index: 3;
+}
+
+.cloud-layer {
+  position: absolute;
+  inset: 0;
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  z-index: 1;
+}
+
+.cloud {
+  position: absolute;
+
+  opacity: 0.35;
+
+  filter: blur(0px);
+
+  animation: drift linear infinite;
+}
+
+@keyframes drift {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-900px);
+  }
 }
 
 /* ─── PLAYER ──────────────────────────────────────────────── */
@@ -47,16 +97,14 @@ body {
   background: #4af;
   border-radius: 4px;
   box-shadow: 0 0 8px #4af, 0 0 16px rgba(68,170,255,0.4);
+  display: none; /* shown by script.js initGame() once a run actually starts */
 }
 
 /* ─── ENEMY ───────────────────────────────────────────────── */
 .enemy {
   position: absolute;
-  width: 30px;
-  height: 30px;
-  background: #f44;
-  border-radius: 4px;
-  box-shadow: 0 0 6px rgba(255,80,80,0.5);
+  image-rendering: pixelated;
+  pointer-events: none;
 }
 
 /* ─── BOSS HP BAR ─────────────────────────────────────────── */
@@ -166,6 +214,15 @@ body {
   /* In inside mode, layout.js repositions this to fixed bottom */
 }
 
+/* ─── MENU MODE ───────────────────────────────────────────── */
+/* menu.js toggles this class on <body> whenever the pre-game menu flow
+   (as opposed to live gameplay) is active, so the HUD/trackpad never
+   linger behind or beside the menu overlay. */
+body.dg-menu-mode .mousetrackpad,
+body.dg-menu-mode .data {
+  display: none;
+}
+
 /* ─── RESPONSIVE BREAKPOINTS ─────────────────────────────── */
 /* These handle cases where layout.js hasn't run yet or JS is off.
    layout.js takes over at runtime and applies precise pixel scaling. */
@@ -189,3 +246,256 @@ body {
   .Gameframe    { width: 600px; height: 400px; }
   .mousetrackpad { width: 600px; height: 200px; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   MENU SYSTEM (menu.js) — startup / lobby / mode / character /
+   settings / pause screens.
+
+   Deliberately independent from .Gameframe and layout.js: this is a
+   fixed, full-viewport overlay with its own simple responsive sizing,
+   so it can never be scaled, clipped, or repositioned by whatever
+   layout.js is doing with the game frame (and vice versa).
+   ═══════════════════════════════════════════════════════════ */
+
+#menu-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 6, 10, 0.88);
+  font-family: monospace;
+}
+#menu-overlay.active { display: flex; }
+
+.menu-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: min(88vw, 360px);
+  max-height: 86dvh;
+  overflow-y: auto;
+  background: #0e0e14;
+  border: 2px solid #333;
+  padding: 26px 20px;
+  color: #eee;
+  text-align: center;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.55);
+}
+.menu-screen.active { display: flex; }
+
+.menu-title {
+  font-size: 20px;
+  letter-spacing: 3px;
+  color: #ffcc44;
+  text-shadow: 0 0 8px rgba(255, 204, 68, 0.5);
+  margin-bottom: 4px;
+}
+
+.menu-note {
+  color: #999;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+/* stacked menu buttons */
+.menu-btn-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 220px;
+}
+
+.menu-btn {
+  font-family: monospace;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #eee;
+  background: #1a1a1a;
+  border: 2px solid #555;
+  padding: 11px 14px;
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s, color 0.1s, transform 0.05s;
+}
+.menu-btn:hover   { border-color: #4af; color: #4af; }
+.menu-btn:active  { transform: translateY(1px); }
+
+.menu-btn--accent { border-color: #ffcc44; color: #ffcc44; }
+.menu-btn--accent:hover { background: #2a2410; }
+
+.menu-btn--danger { border-color: #ff5566; color: #ff8899; }
+.menu-btn--danger:hover { background: #2a1010; }
+
+.menu-btn--disabled,
+.menu-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* return / back button, present on every page */
+.menu-return {
+  margin-top: 10px;
+  font-family: monospace;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #888;
+  background: transparent;
+  border: 1px solid #444;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.menu-return:hover { color: #eee; border-color: #888; }
+
+/* persistent bottom-right settings/pause shortcut — fixed to the
+   viewport, independent of both the overlay and the game frame */
+.menu-shortcut {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  border: 2px solid #555;
+  color: #ccc;
+  font-size: 18px;
+  line-height: 1;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1001;
+}
+.menu-shortcut:hover { border-color: #4af; color: #4af; }
+
+.menu-shortcut--left {
+  right: auto;
+  left: 16px;
+  font-size: 15px;
+}
+.menu-shortcut--left:hover { border-color: #ffaa33; color: #ffaa33; }
+.menu-shortcut:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* character preview — startup screen: no visible container/box, just
+   the character art (or fallback letter) floating cleanly */
+.char-preview-wrap {
+  width: 84px;
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  color: #fff;
+  overflow: hidden;
+}
+.char-preview-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+/* characters screen: a subtle frame helps read it as a selection UI */
+.char-preview-wrap--large {
+  width: 96px;
+  height: 96px;
+  font-size: 34px;
+  border: 2px solid #333;
+}
+
+.char-select-name {
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: #4af;
+  margin-top: -6px;
+}
+
+.char-thumb-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+
+.char-thumb {
+  width: 48px;
+  height: 58px;
+  background: #151515;
+  border: 2px solid #444;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  padding: 4px;
+  color: #888;
+}
+.char-thumb:hover { border-color: #4af; }
+.char-thumb--selected {
+  border-color: #ffcc44;
+  color: #ffcc44;
+  box-shadow: 0 0 6px rgba(255, 204, 68, 0.5);
+}
+
+.char-thumb-imgwrap {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #fff;
+}
+.char-thumb-imgwrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.char-thumb-label { font-size: 8px; letter-spacing: 0.5px; }
+
+/* settings screen */
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 240px;
+}
+.settings-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #bbb;
+  text-align: left;
+}
+.settings-slider { width: 100%; accent-color: #4af; }
+
+.settings-link {
+  color: #4af;
+  font-size: 12px;
+  text-decoration: none;
+  border-bottom: 1px dashed #4af;
+}
+.settings-link:hover { color: #8cf; }
+
+.settings-version { font-size: 11px; color: #888; }
+.settings-version summary { cursor: pointer; }
+
+.settings-credit {
+  font-size: 11px;
+  color: #666;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+

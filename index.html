@@ -8,7 +8,112 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- ═══════════ MENU SYSTEM (menu.js) ═══════════
+       Deliberately kept OUTSIDE .Gameframe as its own fixed, full-viewport
+       overlay so it can never interfere with the game's own coordinate
+       space, entity layering, or layout.js's scaling of the frame. -->
+  <div id="menu-overlay">
+
+    <!-- STARTUP -->
+    <div class="menu-screen" id="screen-startup">
+      <h1 class="menu-title">DHIKA'S GAME</h1>
+      <div class="char-preview-wrap" id="startupPreviewWrap"></div>
+      <button class="menu-btn menu-btn--accent" id="btn-start">START</button>
+    </div>
+
+    <!-- LOBBY -->
+    <div class="menu-screen" id="screen-lobby">
+      <h2 class="menu-title">MAIN MENU</h2>
+      <div class="menu-btn-stack">
+        <button class="menu-btn" id="btn-modes">MODES</button>
+        <button class="menu-btn" id="btn-characters">CHARACTERS</button>
+        <button class="menu-btn" id="btn-settings-lobby">SETTINGS</button>
+      </div>
+      <button class="menu-return" id="btn-lobby-return">← RETURN</button>
+    </div>
+
+    <!-- MODE SELECT -->
+    <div class="menu-screen" id="screen-modes">
+      <h2 class="menu-title">SELECT MODE</h2>
+      <div class="menu-btn-stack">
+        <button class="menu-btn" id="btn-mode-story">STORY</button>
+        <button class="menu-btn" id="btn-mode-endless">ENDLESS</button>
+      </div>
+      <button class="menu-return" id="btn-modes-return">← RETURN</button>
+    </div>
+
+    <!-- STORY SUBMENU -->
+    <div class="menu-screen" id="screen-story">
+      <h2 class="menu-title">STORY MODE</h2>
+      <div class="menu-btn-stack">
+        <button class="menu-btn" id="btn-story-new">NEW GAME</button>
+        <button class="menu-btn" id="btn-story-continue">CONTINUE</button>
+      </div>
+      <button class="menu-return" id="btn-story-return">← RETURN</button>
+    </div>
+
+    <!-- ENDLESS (placeholder) -->
+    <div class="menu-screen" id="screen-endless">
+      <h2 class="menu-title">ENDLESS MODE</h2>
+      <p class="menu-note">🚧 Coming Soon 🚧</p>
+      <button class="menu-return" id="btn-endless-return">← RETURN</button>
+    </div>
+
+    <!-- CHARACTERS -->
+    <div class="menu-screen" id="screen-characters">
+      <h2 class="menu-title">CHARACTERS</h2>
+      <div class="char-preview-wrap char-preview-wrap--large" id="charSelectImgWrap"></div>
+      <div class="char-select-name" id="charSelectName">Reimu</div>
+      <div class="char-thumb-row" id="charThumbRow"></div>
+      <button class="menu-return" id="btn-characters-return">← RETURN</button>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="menu-screen" id="screen-settings">
+      <h2 class="menu-title">SETTINGS</h2>
+      <div class="settings-list">
+        <label class="settings-row">SFX
+          <input type="range" min="0" max="100" id="vol-sfx" class="settings-slider">
+        </label>
+        <label class="settings-row">BACKSOUND
+          <input type="range" min="0" max="100" id="vol-bgm" class="settings-slider">
+        </label>
+        <label class="settings-row">VOICES
+          <input type="range" min="0" max="100" id="vol-voice" class="settings-slider">
+        </label>
+      </div>
+      <!-- TODO: replace href with the real GitHub repository URL -->
+      <a href="#" class="settings-link" id="github-link">GitHub ↗</a>
+      <details class="settings-version">
+        <summary>Version 1.0</summary>
+        <p>Initial release.</p>
+      </details>
+      <div class="settings-credit">Credits: Dhika</div>
+      <button class="menu-return" id="btn-settings-return">← RETURN</button>
+    </div>
+
+    <!-- PAUSE (shown during gameplay) -->
+    <div class="menu-screen" id="screen-pause">
+      <h2 class="menu-title">PAUSED</h2>
+      <div class="menu-btn-stack">
+        <button class="menu-btn" id="btn-pause-resume">RESUME</button>
+        <button class="menu-btn" id="btn-pause-settings">SETTINGS</button>
+        <button class="menu-btn menu-btn--danger" id="btn-pause-exit">EXIT TO LOBBY</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Persistent bottom-right shortcut: opens Settings on the Lobby, opens Pause in-game.
+       Lives outside #menu-overlay so it stays visible while the overlay itself is hidden
+       during live gameplay. -->
+  <button class="menu-shortcut" id="btn-settings-shortcut" title="Settings">⚙</button>
+
+  <!-- Bomb button (placeholder mechanic) — visible only during live gameplay. -->
+  <button class="menu-shortcut menu-shortcut--left" id="btn-bomb" title="Bomb">💣</button>
+
   <section class="Gameframe">
+    <div class="cloud-layer"></div>
     <div class="character">
       <span></span>
     </div>
@@ -32,5 +137,6 @@
 
   <script src="layout.js"></script>
   <script src="script.js"></script>
+  <script src="menu.js"></script>
 </body>
 </html>

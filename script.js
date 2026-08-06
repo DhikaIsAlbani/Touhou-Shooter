@@ -1656,16 +1656,7 @@ if (state.activeEffects.speedUp > 0) {
 
   // ── Player bullets ──
   state.playerBullets = state.playerBullets.filter(b => {
-  
 
-    b.el.style.left = b.x + "px";
-    b.el.style.top = b.y + "px";
-
-    b.x,
-    b.y,
-    b.width,
-    b.height
-  
     if (b.track) {
 
   const target =
@@ -1702,7 +1693,14 @@ if (state.activeEffects.speedUp > 0) {
     b.vy = Math.sin(newAngle) * spd;
   }
 }
-    
+
+    // Advance position. Lasers reposition themselves relative to the player
+    // further down instead, so they're excluded here.
+    if (!b.laser) {
+      b.x += b.vx;
+      b.y += b.vy;
+    }
+
   if (b.slash) {
 
   b.life--;
@@ -1725,6 +1723,7 @@ if (b.laser) {
 const bh = b.laser ? b.height : (b.size || BULLET_SIZE);
 
 if (
+    b.x < -bw ||
     b.x > FRAME_W ||
     b.y < -bh ||
     b.y > FRAME_H + bh
